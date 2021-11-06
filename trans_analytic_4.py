@@ -19,8 +19,8 @@ def run(name):
 def run(input, output):
   data = pd.read_csv(input)
 
-  data['transaction'] = 1
-  s1 = data.groupby('user')['transaction'].sum()
+  data['transactions'] = 1
+  s1 = data.groupby('user')['transactions'].sum()
   s1 = s1.sort_values(axis=0, ascending=False)
   s1 = s1[:10]
   d1 = pd.DataFrame(s1)
@@ -31,13 +31,14 @@ def run(input, output):
   # d2 = d2.drop_duplicates(subset=['product'])
 
   # d2 = d2.drop(['timestamp'], axis=1)
-  # d1 = d1.drop(['transaction'], axis=1)
+  # d1 = d1.drop(['transactions'], axis=1)
 
   df = d1.join(d2)
-  print(df)
   df = df.sort_values(by="timestamp", ascending=True)
-  df = df.groupby('user').nth(2)
-  print(df)  
+  df = df.groupby('user').nth(1)
+  df = df.drop(['transactions', 'timestamp'], axis=1)
+  df = df.set_index('product')
+  df.to_csv(output, header=False)
 
 
 if __name__ == '__main__':
